@@ -126,8 +126,14 @@ def train_dynamics(args):
 
     # Create and load VAE
     vae = VAE(in_channels=4, latent_dim=64, beta=0.0001)
-    checkpoint = torch.load(vae_checkpoint, map_location=device)
-    vae.load_state_dict(checkpoint["model_state_dict"])
+    checkpoint = torch.load(vae_checkpoint, map_location=device, weights_only=True)
+    state_dict = checkpoint["model_state_dict"]
+
+    # Handle torch.compile() prefix in saved weights
+    if any(k.startswith("_orig_mod.") for k in state_dict.keys()):
+        state_dict = {k.replace("_orig_mod.", ""): v for k, v in state_dict.items()}
+
+    vae.load_state_dict(state_dict)
 
     # Create dataset
     dataset = DynamicsDataset(
