@@ -2,6 +2,8 @@
 
 A 2D world model that learns to simulate Atari games from scratch. ArcadeDreamer uses a Variational Autoencoder (VAE) to compress game frames into a compact latent space, and a GRU-based dynamics model to predict future states given actions.
 
+![Breakout Gameplay](https://stable-baselines.readthedocs.io/en/master/_images/breakout.gif)
+
 ## Features
 
 - **Data Collection**: Collect training data from Atari games using Gymnasium and ale-py
