@@ -135,8 +135,11 @@ def cmd_train(args):
             vae_checkpoint = str(vae_checkpoints[-1])
 
         print(f"Loading VAE from {vae_checkpoint}")
-        checkpoint = torch.load(vae_checkpoint, map_location=device)
-        vae.load_state_dict(checkpoint["model_state_dict"])
+        checkpoint = torch.load(vae_checkpoint, map_location=device, weights_only=True)
+        vae_weights = checkpoint["model_state_dict"]
+        if any(k.startswith("_orig_mod.") for k in vae_weights.keys()):
+            vae_weights = {k.replace("_orig_mod.", ""): v for k, v in vae_weights.items()}
+        vae.load_state_dict(vae_weights)
 
         # Create dataset
         dataset = DynamicsDataset(
@@ -208,8 +211,11 @@ def cmd_dream(args):
         vae_checkpoint = str(vae_checkpoints[-1])
 
     print(f"Loading VAE from {vae_checkpoint}")
-    vae_state = torch.load(vae_checkpoint, map_location=device)
-    vae.load_state_dict(vae_state["model_state_dict"])
+    vae_state = torch.load(vae_checkpoint, map_location=device, weights_only=True)
+    vae_weights = vae_state["model_state_dict"]
+    if any(k.startswith("_orig_mod.") for k in vae_weights.keys()):
+        vae_weights = {k.replace("_orig_mod.", ""): v for k, v in vae_weights.items()}
+    vae.load_state_dict(vae_weights)
 
     # Load dynamics
     dynamics = DynamicsModel(
@@ -228,8 +234,11 @@ def cmd_dream(args):
         dyn_checkpoint = str(dyn_checkpoints[-1])
 
     print(f"Loading dynamics from {dyn_checkpoint}")
-    dyn_state = torch.load(dyn_checkpoint, map_location=device)
-    dynamics.load_state_dict(dyn_state["model_state_dict"])
+    dyn_state = torch.load(dyn_checkpoint, map_location=device, weights_only=True)
+    dyn_weights = dyn_state["model_state_dict"]
+    if any(k.startswith("_orig_mod.") for k in dyn_weights.keys()):
+        dyn_weights = {k.replace("_orig_mod.", ""): v for k, v in dyn_weights.items()}
+    dynamics.load_state_dict(dyn_weights)
 
     # Create world model
     world_model = WorldModel(vae, dynamics)
@@ -301,8 +310,11 @@ def cmd_play(args):
         vae_checkpoint = str(vae_checkpoints[-1])
 
     print(f"Loading VAE from {vae_checkpoint}")
-    vae_state = torch.load(vae_checkpoint, map_location=device)
-    vae.load_state_dict(vae_state["model_state_dict"])
+    vae_state = torch.load(vae_checkpoint, map_location=device, weights_only=True)
+    vae_weights = vae_state["model_state_dict"]
+    if any(k.startswith("_orig_mod.") for k in vae_weights.keys()):
+        vae_weights = {k.replace("_orig_mod.", ""): v for k, v in vae_weights.items()}
+    vae.load_state_dict(vae_weights)
 
     # Load dynamics
     dynamics = DynamicsModel(
@@ -321,8 +333,11 @@ def cmd_play(args):
         dyn_checkpoint = str(dyn_checkpoints[-1])
 
     print(f"Loading dynamics from {dyn_checkpoint}")
-    dyn_state = torch.load(dyn_checkpoint, map_location=device)
-    dynamics.load_state_dict(dyn_state["model_state_dict"])
+    dyn_state = torch.load(dyn_checkpoint, map_location=device, weights_only=True)
+    dyn_weights = dyn_state["model_state_dict"]
+    if any(k.startswith("_orig_mod.") for k in dyn_weights.keys()):
+        dyn_weights = {k.replace("_orig_mod.", ""): v for k, v in dyn_weights.items()}
+    dynamics.load_state_dict(dyn_weights)
 
     # Create world model
     world_model = WorldModel(vae, dynamics)
